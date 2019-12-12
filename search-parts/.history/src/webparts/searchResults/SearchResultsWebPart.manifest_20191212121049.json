@@ -27,7 +27,7 @@
             },
             "officeFabricIconFontName": "SearchAndApps",
             "properties": {
-                "queryKeywords": "",
+                "queryKeywords": "Path: \"https://apttustest.sharepoint.com/sites/SalesPortal/CPQ Document\" (contentclass:STS_ListItem OR IsDocument:True) TopAssetOWSBOOL=1",
                 "queryTemplate": "{searchTerms}",
                 "sortList": [
                     {

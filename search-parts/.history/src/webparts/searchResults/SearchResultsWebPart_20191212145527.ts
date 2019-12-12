@@ -221,6 +221,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         });
 
         const isValueConnected = !!this.properties.queryKeywords.tryGetSource();
+        debugger;
         this._searchContainer = React.createElement(
             SearchResultsContainer,
             {

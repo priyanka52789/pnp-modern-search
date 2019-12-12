@@ -221,12 +221,13 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         });
 
         const isValueConnected = !!this.properties.queryKeywords.tryGetSource();
+        debugger;
         this._searchContainer = React.createElement(
             SearchResultsContainer,
             {
                 searchService: this._searchService,
                 taxonomyService: this._taxonomyService,
-                queryKeywords: `Path:"https://apttustest.sharepoint.com/sites/SalesPortal/` + queryKeywords + ` Document" (contentclass:STS_ListItem OR IsDocument:True) TopAssetOWSBOOL=1`,
+                queryKeywords: queryKeywords,
                 sortableFields: this.properties.sortableFields,
                 showPaging: this.properties.showPaging,
                 showResultsCount: this.properties.showResultsCount,
@@ -235,7 +236,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 templateService: this._templateService,
                 templateContent: this._templateContentToDisplay,
                 templateParameters: this.properties.templateParameters,
-                webPartTitle: this.properties.webPartTitle + ' for ' + queryKeywords,
+                webPartTitle: this.properties.webPartTitle,
                 currentUICultureName: this.context.pageContext.cultureInfo.currentUICultureName,
                 siteServerRelativeUrl: this.context.pageContext.site.serverRelativeUrl,
                 webServerRelativeUrl: this.context.pageContext.web.serverRelativeUrl,
