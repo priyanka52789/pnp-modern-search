@@ -175,7 +175,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         }
 
         let queryKeywords = (!queryDataSourceValue) ? this.properties.defaultSearchQuery : queryDataSourceValue;
-
+        queryKeywords = queryKeywords == "" ? "CLM" : queryKeywords;
         // Get data from connected sources
         if (this._refinerSourceData) {
             const refinerSourceData: IRefinerSourceData = this._refinerSourceData.tryGetValue();
@@ -221,13 +221,13 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         });
 
         const isValueConnected = !!this.properties.queryKeywords.tryGetSource();
-        debugger;
         this._searchContainer = React.createElement(
             SearchResultsContainer,
             {
                 searchService: this._searchService,
                 taxonomyService: this._taxonomyService,
-                queryKeywords: queryKeywords,
+                //queryKeywords: `Path:"https://apttustest.sharepoint.com/sites/SalesPortal/` + queryKeywords + ` Document" (contentclass:STS_ListItem OR IsDocument:True) TopAssetOWSBOOL=1`,
+                queryKeywords: `Path:"https://apttustest.sharepoint.com/" (contentclass:STS_ListItem OR IsDocument:True) SolutionOWSCHCS="` + queryKeywords + `"`,
                 sortableFields: this.properties.sortableFields,
                 showPaging: this.properties.showPaging,
                 showResultsCount: this.properties.showResultsCount,
@@ -236,7 +236,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 templateService: this._templateService,
                 templateContent: this._templateContentToDisplay,
                 templateParameters: this.properties.templateParameters,
-                webPartTitle: this.properties.webPartTitle,
+                webPartTitle: this.properties.webPartTitle + ' for ' + queryKeywords,
                 currentUICultureName: this.context.pageContext.cultureInfo.currentUICultureName,
                 siteServerRelativeUrl: this.context.pageContext.site.serverRelativeUrl,
                 webServerRelativeUrl: this.context.pageContext.web.serverRelativeUrl,

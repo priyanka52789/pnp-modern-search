@@ -175,7 +175,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         }
 
         let queryKeywords = (!queryDataSourceValue) ? this.properties.defaultSearchQuery : queryDataSourceValue;
-
+        queryKeywords = "CPQ";
         // Get data from connected sources
         if (this._refinerSourceData) {
             const refinerSourceData: IRefinerSourceData = this._refinerSourceData.tryGetValue();
@@ -226,8 +226,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             {
                 searchService: this._searchService,
                 taxonomyService: this._taxonomyService,
-                //queryKeywords: `Path:"https://apttustest.sharepoint.com/sites/SalesPortal/` + queryKeywords + ` Document" (contentclass:STS_ListItem OR IsDocument:True) TopAssetOWSBOOL=1`,
-                queryKeywords: `Path:"https://apttustest.sharepoint.com/" (contentclass:STS_ListItem OR IsDocument:True) SolutionOWSCHCS="` + queryKeywords + `"`,
+                queryKeywords: `Path:"https://apttustest.sharepoint.com/sites/SalesPortal/` + queryKeywords + ` Document" (contentclass:STS_ListItem OR IsDocument:True) TopAssetOWSBOOL=1`,
                 sortableFields: this.properties.sortableFields,
                 showPaging: this.properties.showPaging,
                 showResultsCount: this.properties.showResultsCount,
