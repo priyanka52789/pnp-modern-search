@@ -54,8 +54,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         const items = this.state.results;
         const hasError = this.state.hasError;
         const errorMessage = this.state.errorMessage;
-        //dynamic data
-        if (this.state.results.RelevantResults.length > 0)
+        //static data
+        if (this.state.results.RelevantResults.length >= 2)
         {
             this.state.results.RelevantResults[0].Path= "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
             this.state.results.RelevantResults[0].DefaultEncodingURL= "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
@@ -75,6 +75,32 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             this.state.results.RelevantResults[2].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/b4a469b1-ef52-4dd6-a3c0-783d9b16c6a2/info/LIST/title?web=1";
             this.state.results.RelevantResults[2].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/b4a469b1-ef52-4dd6-a3c0-783d9b16c6a2/info/LIST/title?web=1";
 
+
+        }
+        else if (this.state.results.RelevantResults.length >= 1)
+        {
+            this.state.results.RelevantResults[0].Path= "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
+            this.state.results.RelevantResults[0].DefaultEncodingURL= "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
+            this.state.results.RelevantResults[0].OriginalPath = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
+            this.state.results.RelevantResults[0].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
+            this.state.results.RelevantResults[0].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
+
+            this.state.results.RelevantResults[1].Path= "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1";
+            this.state.results.RelevantResults[1].DefaultEncodingURL= "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1";
+            this.state.results.RelevantResults[1].OriginalPath = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1";
+            this.state.results.RelevantResults[1].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1";
+            this.state.results.RelevantResults[1].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1";
+
+           
+
+        }
+        else if (this.state.results.RelevantResults.length >= 0)
+        {
+            this.state.results.RelevantResults[0].Path= "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
+            this.state.results.RelevantResults[0].DefaultEncodingURL= "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
+            this.state.results.RelevantResults[0].OriginalPath = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
+            this.state.results.RelevantResults[0].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
+            this.state.results.RelevantResults[0].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
 
         }
            
