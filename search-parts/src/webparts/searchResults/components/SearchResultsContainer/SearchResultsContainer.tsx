@@ -49,13 +49,36 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
     }
 
     public render(): React.ReactElement<ISearchResultsContainerProps> {
-
+        //debugger;
         const areResultsLoading = this.state.areResultsLoading;
         const items = this.state.results;
         const hasError = this.state.hasError;
         const errorMessage = this.state.errorMessage;
+        //dynamic data
+        if (this.state.results.RelevantResults.length > 0)
+        {
+            this.state.results.RelevantResults[0].Path= "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
+            this.state.results.RelevantResults[0].DefaultEncodingURL= "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
+            this.state.results.RelevantResults[0].OriginalPath = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
+            this.state.results.RelevantResults[0].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
+            this.state.results.RelevantResults[0].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
 
-        let renderWpContent: JSX.Element = null;
+            this.state.results.RelevantResults[1].Path= "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1";
+            this.state.results.RelevantResults[1].DefaultEncodingURL= "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1";
+            this.state.results.RelevantResults[1].OriginalPath = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1";
+            this.state.results.RelevantResults[1].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1";
+            this.state.results.RelevantResults[1].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1";
+
+            this.state.results.RelevantResults[2].Path= "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/b4a469b1-ef52-4dd6-a3c0-783d9b16c6a2/info/LIST/title?web=1";
+            this.state.results.RelevantResults[2].DefaultEncodingURL= "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/b4a469b1-ef52-4dd6-a3c0-783d9b16c6a2/info/LIST/title?web=1";
+            this.state.results.RelevantResults[2].OriginalPath = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/b4a469b1-ef52-4dd6-a3c0-783d9b16c6a2/info/LIST/title?web=1";
+            this.state.results.RelevantResults[2].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/b4a469b1-ef52-4dd6-a3c0-783d9b16c6a2/info/LIST/title?web=1";
+            this.state.results.RelevantResults[2].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/b4a469b1-ef52-4dd6-a3c0-783d9b16c6a2/info/LIST/title?web=1";
+
+
+        }
+           
+            let renderWpContent: JSX.Element = null;
         let renderOverlay: JSX.Element = null;
         let renderWebPartTitle: JSX.Element = null;
         let renderShimmerElements: JSX.Element = null;
@@ -108,7 +131,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         if (this.state.results.SecondaryResults.length > 0) {
             totalPrimaryAndSecondaryResults += this.state.results.SecondaryResults.reduce((sum, block) => sum += block.Results.length, 0);
         }
-        
+
         // WebPart content
         if (totalPrimaryAndSecondaryResults === 0 && this.props.displayMode === DisplayMode.Edit && this.props.showBlank) {
             renderWpContent = <MessageBar messageBarType={MessageBarType.info}>{strings.ShowBlankEditInfoMessage}</MessageBar>;
@@ -147,14 +170,14 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             }
 
             renderWpContent =
-                <div>                    
-                    <div className={styles.searchWp__buttonBar}>{sortPanel}</div>                       
+                <div>
+                    <div className={styles.searchWp__buttonBar}>{sortPanel}</div>
                     <div id={this.state.mountingNodeId} />
                     {renderOverlay}
                     {renderSearchResultTemplate}
                 </div>;
         }
-    
+
         // WebPart Title
         if (this.props.webPartTitle && this.props.webPartTitle.length > 0) {
             renderWebPartTitle = <WebPartTitle title={this.props.webPartTitle} updateProperty={null} displayMode={DisplayMode.Read} />;
@@ -168,7 +191,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         return (
             <div className={styles.searchWp}>
                 <div tabIndex={-1} ref={(ref) => { this._searchWpRef = ref; }}></div>
-                {renderWebPartTitle}                
+                {renderWebPartTitle}
                 {renderShimmerElements ? renderShimmerElements : renderWpContent}
             </div>
         );

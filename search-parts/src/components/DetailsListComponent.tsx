@@ -148,7 +148,7 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
 
         const columns: IColumn[] = [
         ];
-
+        //debugger;
         // Show file icon pption
         if (this.props.showFileIcon) {
             columns.push(
@@ -222,7 +222,7 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
 
                             // Make the value clickable to the corresponding result item 
                             if (column.isResultItemLink) {
-                                renderColumnValue = <a style={{ color: this.props.themeVariant.semanticColors.link }} href={item.ServerRedirectedURL ? item.ServerRedirectedURL : item.Path}>{renderColumnValue}</a>;
+                                renderColumnValue = <a target="_blank" style={{ color: this.props.themeVariant.semanticColors.link }} href={item.ServerRedirectedURL ? item.ServerRedirectedURL : item.Path}>{renderColumnValue}</a>;
                             }
 
                             return renderColumnValue;
@@ -302,14 +302,14 @@ function _copyAndSort<T>(items: T[], columnKey: string, isSortedDescending?: boo
 
 export class DetailsListWebComponent extends BaseWebComponent {
 
-  public constructor() {
-     super(); 
-  }
+    public constructor() {
+        super();
+    }
 
-  public connectedCallback() {
+    public connectedCallback() {
 
-     let props = this.resolveAttributes();
-     const detailsListComponent = <DetailsListComponent {...props} themeVariant={this._themeVariant}/>;
-     ReactDOM.render(detailsListComponent, this);
-  }
+        let props = this.resolveAttributes();
+        const detailsListComponent = <DetailsListComponent {...props} themeVariant={this._themeVariant} />;
+        ReactDOM.render(detailsListComponent, this);
+    }
 }
