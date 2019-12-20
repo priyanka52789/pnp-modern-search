@@ -55,7 +55,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         const hasError = this.state.hasError;
         const errorMessage = this.state.errorMessage;
         //static data
-        if (this.state.results.RelevantResults.length <= 3)
+        if (this.state.results.RelevantResults.length <= 3 && this.state.results.RelevantResults.length > 0)
         {
             this.state.results.RelevantResults[0].Path= "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
             this.state.results.RelevantResults[0].DefaultEncodingURL= "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
@@ -77,7 +77,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
 
         }
-        else if (this.state.results.RelevantResults.length <= 2)
+        else if (this.state.results.RelevantResults.length <= 2 && this.state.results.RelevantResults.length > 0)
         {
             this.state.results.RelevantResults[0].Path= "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
             this.state.results.RelevantResults[0].DefaultEncodingURL= "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
@@ -94,7 +94,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
            
 
         }
-        else if (this.state.results.RelevantResults.length == 1)
+        else if (this.state.results.RelevantResults.length == 1 && this.state.results.RelevantResults.length > 0)
         {
             this.state.results.RelevantResults[0].Path= "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
             this.state.results.RelevantResults[0].DefaultEncodingURL= "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
