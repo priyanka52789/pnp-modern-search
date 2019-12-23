@@ -10,8 +10,26 @@ import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { IconComponent } from './IconComponent';
 import { BaseWebComponent } from './BaseWebComponent';
 import * as ReactDOM from 'react-dom';
+import { DefaultButton, Callout, Link, getTheme, FontWeights, getId } from 'office-ui-fabric-react';
+import { Dialog, DialogType, DialogFooter } from 'office-ui-fabric-react/lib/Dialog';
 
+// Themed styles for the example.
+const theme = getTheme();
 const classNames = mergeStyleSets({
+    callout: {
+        maxWidth: 300
+    },
+    header: {
+        padding: '18px 24px 12px'
+    },
+    title: [
+        theme.fonts.xLarge,
+        {
+            margin: 0,
+            color: theme.palette.neutralPrimary,
+            fontWeight: FontWeights.semilight
+        }
+    ],
     fileIconHeaderIcon: {
         padding: 0,
         fontSize: '16px'
@@ -135,12 +153,12 @@ export interface DetailsListComponentProps {
 export interface IDetailsListComponentState {
     columns: IColumn[];
     items: ISearchResult[];
+    hideDialog: boolean;
 }
 
 export class DetailsListComponent extends React.Component<DetailsListComponentProps, IDetailsListComponentState> {
 
     private _allItems: ISearchResult[];
-
     constructor(props: DetailsListComponentProps) {
         super(props);
 
@@ -196,7 +214,6 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
                             let value: any = item[column.value];
                             let renderColumnValue: JSX.Element = null;
                             let hasError: boolean = false;
-
                             // Check if the value in an Handlebars expression
                             if (column.useHandlebarsExpr) {
 
@@ -221,7 +238,19 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
                             renderColumnValue = <span title={!hasError ? value : ''} dangerouslySetInnerHTML={{ __html: value }}></span>;
 
                             // Make the value clickable to the corresponding result item 
-                            if (column.isResultItemLink) {
+                            if (item.ServerRedirectedEmbedURL == "NOSYNC" && column.isResultItemLink) {
+                                //debugger;
+                                // Simulate an async call
+
+                                renderColumnValue = <div>
+                                    <div  style={{ cursor: "pointer", color: this.props.themeVariant.semanticColors.link, textDecoration: "underline" }} onClick={() => { this.setState({ hideDialog: false }); }}>{renderColumnValue}</div>
+                                   
+                                </div>
+
+
+
+                            }
+                            else if (column.isResultItemLink) {
                                 renderColumnValue = <a target="_blank" style={{ color: this.props.themeVariant.semanticColors.link }} href={item.ServerRedirectedURL ? item.ServerRedirectedURL : item.Path}>{renderColumnValue}</a>;
                             }
 
@@ -234,9 +263,19 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
 
         this.state = {
             items: this._allItems,
-            columns: columns
+            columns: columns,
+            hideDialog: true
         };
     }
+
+
+    private _showDialog = (): void => {
+        this.setState({ hideDialog: false });
+    };
+
+    private _closeDialog = (): void => {
+        this.setState({ hideDialog: true });
+    };
 
     public render() {
         const { columns, items } = this.state;
@@ -250,21 +289,39 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
         }
 
         return (
-            <Fabric>
-                {renderFilter}
-                <ShimmeredDetailsList
-                    items={items}
-                    compact={this.props.isCompact}
-                    columns={columns}
-                    selectionMode={SelectionMode.none}
-                    setKey="set"
-                    layoutMode={DetailsListLayoutMode.justified}
-                    isHeaderVisible={true}
-                    enableShimmer={this.props.showShimmers}
-                    selectionPreservedOnEmptyClick={true}
-                    enterModalSelectionOnTouch={true}
-                />
-            </Fabric>
+            <div>
+                <Fabric>
+                    {renderFilter}
+                    <ShimmeredDetailsList
+                        items={items}
+                        compact={this.props.isCompact}
+                        columns={columns}
+                        selectionMode={SelectionMode.none}
+                        setKey="set"
+                        layoutMode={DetailsListLayoutMode.justified}
+                        isHeaderVisible={true}
+                        enableShimmer={this.props.showShimmers}
+                        selectionPreservedOnEmptyClick={true}
+                        enterModalSelectionOnTouch={true}
+                    />
+                </Fabric>
+                <Dialog
+                    hidden={this.state.hideDialog}
+                    onDismiss={this._closeDialog}
+                    dialogContentProps={{
+                        type: DialogType.normal,
+                        title: 'Document Info',
+                        closeButtonAriaLabel: 'Close',
+                        subText: 'This document is not available yet. Please check back within one hour.'
+                    }}
+                    modalProps={{
+                        isBlocking: false,
+                        styles: { main: { maxWidth: 450 } }
+                    }}
+                >
+
+                </Dialog>
+            </div>
         );
     }
 
