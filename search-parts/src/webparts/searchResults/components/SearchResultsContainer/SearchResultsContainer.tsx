@@ -21,7 +21,7 @@ import { ILocalizableSearchResultProperty, ILocalizableSearchResult } from '../.
 import * as _ from '@microsoft/sp-lodash-subset';
 import { TemplateService } from '../../../../services/TemplateService/TemplateService';
 import { isEqual } from '@microsoft/sp-lodash-subset';
-
+import pnp, { Web, RoleType, SearchQuery, HttpClient, sp } from 'sp-pnp-js';
 declare var System: any;
 
 export default class SearchResultsContainer extends React.Component<ISearchResultsContainerProps, ISearchResultsContainerState> {
@@ -54,31 +54,6 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         const items = this.state.results;
         const hasError = this.state.hasError;
         const errorMessage = this.state.errorMessage;
-        //static data
-        if (this.state.results.RelevantResults.length > 0) {
-            this.state.results.RelevantResults[0].Path = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
-            this.state.results.RelevantResults[0].DefaultEncodingURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
-            this.state.results.RelevantResults[0].OriginalPath = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
-            this.state.results.RelevantResults[0].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
-            this.state.results.RelevantResults[0].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
-
-            this.state.results.RelevantResults[1] ? this.state.results.RelevantResults[1].Path = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1" : null;
-            this.state.results.RelevantResults[1] ? this.state.results.RelevantResults[1].DefaultEncodingURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1" : null;
-            this.state.results.RelevantResults[1] ? this.state.results.RelevantResults[1].OriginalPath = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1" : null;
-            this.state.results.RelevantResults[1] ? this.state.results.RelevantResults[1].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1" : null;
-            this.state.results.RelevantResults[1] ? this.state.results.RelevantResults[1].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1" : null;
-
-            this.state.results.RelevantResults[2] ? this.state.results.RelevantResults[2].Path = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/b4a469b1-ef52-4dd6-a3c0-783d9b16c6a2/info/LIST/title?web=1" : null;
-            this.state.results.RelevantResults[2] ? this.state.results.RelevantResults[2].DefaultEncodingURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/b4a469b1-ef52-4dd6-a3c0-783d9b16c6a2/info/LIST/title?web=1" : null;
-            this.state.results.RelevantResults[2] ? this.state.results.RelevantResults[2].OriginalPath = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/b4a469b1-ef52-4dd6-a3c0-783d9b16c6a2/info/LIST/title?web=1" : null;
-            this.state.results.RelevantResults[2] ? this.state.results.RelevantResults[2].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/b4a469b1-ef52-4dd6-a3c0-783d9b16c6a2/info/LIST/title?web=1" : null;
-            this.state.results.RelevantResults[2] ? this.state.results.RelevantResults[2].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/b4a469b1-ef52-4dd6-a3c0-783d9b16c6a2/info/LIST/title?web=1" : null;
-
-            this.state.results.RelevantResults[3] ? this.state.results.RelevantResults[3].ServerRedirectedEmbedURL = "NOSYNC" : null;
-
-
-        }
-
 
         let renderWpContent: JSX.Element = null;
         let renderOverlay: JSX.Element = null;
@@ -196,13 +171,44 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 <div tabIndex={-1} ref={(ref) => { this._searchWpRef = ref; }}></div>
                 {renderWebPartTitle}
                 {renderShimmerElements ? renderShimmerElements : renderWpContent}
-               
+
             </div>
         );
-    }
-  
-    public async componentDidMount() {
 
+
+
+
+        //static data
+        // if (this.state.results.RelevantResults.length > 0) {
+        //     this.state.results.RelevantResults[0].Path = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
+        //     this.state.results.RelevantResults[0].DefaultEncodingURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
+        //     this.state.results.RelevantResults[0].OriginalPath = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
+        //     this.state.results.RelevantResults[0].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
+        //     this.state.results.RelevantResults[0].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
+
+        //     this.state.results.RelevantResults[1] ? this.state.results.RelevantResults[1].Path = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1" : null;
+        //     this.state.results.RelevantResults[1] ? this.state.results.RelevantResults[1].DefaultEncodingURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1" : null;
+        //     this.state.results.RelevantResults[1] ? this.state.results.RelevantResults[1].OriginalPath = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1" : null;
+        //     this.state.results.RelevantResults[1] ? this.state.results.RelevantResults[1].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1" : null;
+        //     this.state.results.RelevantResults[1] ? this.state.results.RelevantResults[1].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1" : null;
+
+        //     this.state.results.RelevantResults[2] ? this.state.results.RelevantResults[2].Path = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/b4a469b1-ef52-4dd6-a3c0-783d9b16c6a2/info/LIST/title?web=1" : null;
+        //     this.state.results.RelevantResults[2] ? this.state.results.RelevantResults[2].DefaultEncodingURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/b4a469b1-ef52-4dd6-a3c0-783d9b16c6a2/info/LIST/title?web=1" : null;
+        //     this.state.results.RelevantResults[2] ? this.state.results.RelevantResults[2].OriginalPath = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/b4a469b1-ef52-4dd6-a3c0-783d9b16c6a2/info/LIST/title?web=1" : null;
+        //     this.state.results.RelevantResults[2] ? this.state.results.RelevantResults[2].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/b4a469b1-ef52-4dd6-a3c0-783d9b16c6a2/info/LIST/title?web=1" : null;
+        //     this.state.results.RelevantResults[2] ? this.state.results.RelevantResults[2].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/b4a469b1-ef52-4dd6-a3c0-783d9b16c6a2/info/LIST/title?web=1" : null;
+
+        //     this.state.results.RelevantResults[3] ? this.state.results.RelevantResults[3].ServerRedirectedEmbedURL = "NOSYNC" : null;
+
+
+        // }
+
+
+
+    }
+
+    public async componentDidMount() {
+        //debugger;
         // Don't perform search if there are no keywords
         if (this.props.queryKeywords) {
             try {
@@ -243,7 +249,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
     }
 
     public async componentDidUpdate(prevProps: ISearchResultsContainerProps) {
-
+        //debugger;
         let executeSearch = false;
         let isPageUpdated = false;
         let selectedPage = 1;
@@ -320,6 +326,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
                 this.handleResultUpdateBroadCast(results);
             }
+
         } else {
             // Refresh the template without making a new search query because we don't need to
             if (this.props.templateContent !== this.props.templateContent ||
@@ -337,6 +344,41 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 }
             }
         }
+        if (this.state.results.RelevantResults.length > 0) {
+
+            let modItemArray: any[] = [];
+            let requestArray: any[] = [];
+            this.state.results.RelevantResults.map((item) => {
+                let filterCriteria = "SharePointDocumentURL" + ` eq '` + item.Path + `'`;
+                requestArray.push(pnp.sp.web.lists.getByTitle("Top Assets Siesmic Mapping").items.select("*").filter(filterCriteria).get())
+
+            });
+            return Promise.all(requestArray).then((results: any[]) => {
+                //debugger;
+                results.forEach((element, index) => {
+                    let moditem = this.state.results.RelevantResults[index];
+                    if (element && element[0]) {
+                        var obj = element[0];
+                        moditem.Path = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/" + obj["SiesmicDocumentID"] + "/info/LIST/title?web=1";
+                        moditem.DefaultEncodingURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/" + obj["SiesmicDocumentID"] + "/info/LIST/title?web=1";
+                        moditem.OriginalPath = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/" + obj["SiesmicDocumentID"] + "/info/LIST/title?web=1";
+                        moditem.ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/" + obj["SiesmicDocumentID"] + "/info/LIST/title?web=1";
+
+                    }
+                    else {
+                        moditem.ServerRedirectedEmbedURL = "NOSYNC";
+                    }
+                    modItemArray.push(moditem);
+                });
+                let resultMod = this.state.results;
+                resultMod.RelevantResults = modItemArray;
+                this.setState({
+                    areResultsLoading: false,
+                    results: resultMod
+                });
+            });
+        }
+
     }
 
     /**
