@@ -353,6 +353,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 requestArray.push(pnp.sp.web.lists.getByTitle("Top Assets Siesmic Mapping").items.select("*").filter(filterCriteria).get())
 
             });
+            //dynamic linking to Siesmic
             return Promise.all(requestArray).then((results: any[]) => {
                 //debugger;
                 results.forEach((element, index) => {

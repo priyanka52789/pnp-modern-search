@@ -62,7 +62,7 @@ import { ExtensibilityService } from '../../services/ExtensibilityService/Extens
 import IExtensibilityService from '../../services/ExtensibilityService/IExtensibilityService';
 import { IComponentDefinition } from '../../services/ExtensibilityService/IComponentDefinition';
 import { AvailableComponents } from '../../components/AvailableComponents';
-
+import pnp, { Web } from 'sp-pnp-js';
 export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchResultsWebPartProps> implements IDynamicDataCallables {
 
     private _searchService: ISearchService;
@@ -125,6 +125,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
 
         this.onPropertyPaneFieldChanged = this.onPropertyPaneFieldChanged.bind(this);
         this._onUpdateAvailableProperties = this._onUpdateAvailableProperties.bind(this);
+
     }
 
     public async render(): Promise<void> {
@@ -375,6 +376,11 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         this._synonymTable = this._convertToSynonymTable(this.properties.synonymList);
 
         this._initComplete = true;
+
+        pnp.setup({
+            spfxContext: this.context
+        });
+
         return super.onInit();
     }
 
