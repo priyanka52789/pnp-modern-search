@@ -181,6 +181,9 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         }
 
         let queryKeywords = (!queryDataSourceValue) ? this.properties.defaultSearchQuery : queryDataSourceValue;
+        let selectedMenuItem = this._dynamicDataService.getDataSourceValue(this.properties.menuItem, this.properties.sourceId, this.properties.propertyId, this.properties.propertyPath);
+        let refiner = this._dynamicDataService.getDataSourceValue(this.properties.refinerName, this.properties.sourceId, this.properties.propertyId, this.properties.propertyPath);
+        let path = this._dynamicDataService.getDataSourceValue(this.properties.path, this.properties.sourceId, this.properties.propertyId, this.properties.propertyPath);
 
         // Get data from connected sources
         if (this._refinerSourceData) {
@@ -227,112 +230,96 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         });
 
         const isValueConnected = !!this.properties.queryKeywords.tryGetSource();
-        //debugger;
-        let salesPortalWeb = new Web("https://apttustest.sharepoint.com/sites/SalesPortal");
-        salesPortalWeb.lists.getByTitle("ConfigStore").items.getAll().then((allItems: any[]) => {
 
-            let columnsArr = this.getDataFromConfig(allItems, "CHOICECOLUMNS").split(";");
+        console.log("path:", path, " refiner:", refiner, " selectedMenuItem:", selectedMenuItem, " queryKeywords:", queryKeywords);
+        this._searchContainer = React.createElement(
+            SearchResultsContainer,
+            {
+                searchService: this._searchService,
+                taxonomyService: this._taxonomyService,
+                //queryKeywords: `Path:"https://apttustest.sharepoint.com/sites/SalesPortal/` + queryKeywords + ` Document" (contentclass:STS_ListItem OR IsDocument:True) TopAssetOWSBOOL=1`,
+                queryKeywords: `Path:"` + path + `" (contentclass:STS_ListItem OR IsDocument:True) ` + refiner + `="` + selectedMenuItem + `"`,
+                sortableFields: this.properties.sortableFields,
+                showPaging: this.properties.showPaging,
+                showResultsCount: this.properties.showResultsCount,
+                showBlank: this.properties.showBlank,
+                displayMode: this.displayMode,
+                templateService: this._templateService,
+                templateContent: this._templateContentToDisplay,
+                templateParameters: this.properties.templateParameters,
+                webPartTitle: this.properties.webPartTitle + ' for ' + selectedMenuItem,
+                currentUICultureName: this.context.pageContext.cultureInfo.currentUICultureName,
+                siteServerRelativeUrl: this.context.pageContext.site.serverRelativeUrl,
+                webServerRelativeUrl: this.context.pageContext.web.serverRelativeUrl,
+                resultTypes: this.properties.resultTypes,
+                useCodeRenderer: this.codeRendererIsSelected(),
+                customTemplateFieldValues: this.properties.customTemplateFieldValues,
+                rendererId: this.properties.selectedLayout as any,
+                enableLocalization: this.properties.enableLocalization,
+                selectedPage: selectedPage,
+                onSearchResultsUpdate: async (results, mountingNodeId, searchService) => {
+                    if (this.properties.selectedLayout in ResultsLayoutOption) {
+                        let node = document.getElementById(mountingNodeId);
+                        if (node) {
+                            ReactDom.render(null, node);
+                        }
+                    }
 
-            //queryKeywords = "SalesSupport:Legal";//"Solution:CLM";//
-            let selectedMenuCategory = queryKeywords ? queryKeywords.split(':')[0] : "";
-            let selectedMenuItem = queryKeywords ? queryKeywords.split(':')[1] : "";
-            let selectedMenu = columnsArr.find((element: any) => {
-                if (selectedMenuCategory == element.split("::")[0])
-                    return element;
-            });
-            let menutemDetails = selectedMenu ? selectedMenu.split("::")[1] : "";
-            let refiner = menutemDetails ? menutemDetails.split(",")[4] : "SolutionOWSCHCS";
-            let path = menutemDetails ? menutemDetails.split(",")[5] : "https://apttustest.sharepoint.com/";
+                    if (getVerticalsCounts) {
 
-            this._searchContainer = React.createElement(
-                SearchResultsContainer,
-                {
-                    searchService: this._searchService,
-                    taxonomyService: this._taxonomyService,
-                    //queryKeywords: `Path:"https://apttustest.sharepoint.com/sites/SalesPortal/` + queryKeywords + ` Document" (contentclass:STS_ListItem OR IsDocument:True) TopAssetOWSBOOL=1`,
-                    queryKeywords: `Path:"` + path + `" (contentclass:STS_ListItem OR IsDocument:True) ` + refiner + `="` + selectedMenuItem + `"`,
-                    sortableFields: this.properties.sortableFields,
-                    showPaging: this.properties.showPaging,
-                    showResultsCount: this.properties.showResultsCount,
-                    showBlank: this.properties.showBlank,
-                    displayMode: this.displayMode,
-                    templateService: this._templateService,
-                    templateContent: this._templateContentToDisplay,
-                    templateParameters: this.properties.templateParameters,
-                    webPartTitle: this.properties.webPartTitle + ' for ' + selectedMenuItem,
-                    currentUICultureName: this.context.pageContext.cultureInfo.currentUICultureName,
-                    siteServerRelativeUrl: this.context.pageContext.site.serverRelativeUrl,
-                    webServerRelativeUrl: this.context.pageContext.web.serverRelativeUrl,
-                    resultTypes: this.properties.resultTypes,
-                    useCodeRenderer: this.codeRendererIsSelected(),
-                    customTemplateFieldValues: this.properties.customTemplateFieldValues,
-                    rendererId: this.properties.selectedLayout as any,
-                    enableLocalization: this.properties.enableLocalization,
-                    selectedPage: selectedPage,
-                    onSearchResultsUpdate: async (results, mountingNodeId, searchService) => {
-                        if (this.properties.selectedLayout in ResultsLayoutOption) {
-                            let node = document.getElementById(mountingNodeId);
-                            if (node) {
-                                ReactDom.render(null, node);
+                        const searchVerticalSourceData: ISearchVerticalSourceData = this._searchVerticalSourceData.tryGetValue();
+                        const otherVerticals = searchVerticalSourceData.verticalsConfiguration.filter(v => { return v.key !== searchVerticalSourceData.selectedVertical.key; });
+                        searchService.getSearchVerticalCounts(queryKeywords, otherVerticals, searchService.enableQueryRules).then((verticalsInfos) => {
+
+                            let currentCount = results.PaginationInformation ? results.PaginationInformation.TotalRows : undefined;
+
+                            if (currentCount !== undefined && currentCount !== null) {
+                                // Add current vertical infos
+                                let currentVerticalInfos: ISearchVerticalInformation = {
+                                    Count: currentCount,
+                                    VerticalKey: searchVerticalSourceData.selectedVertical.key
+                                };
+
+                                verticalsInfos.push(currentVerticalInfos);
                             }
-                        }
 
-                        if (getVerticalsCounts) {
+                            this._verticalsInformation = update(this._verticalsInformation, { $set: verticalsInfos });
+                            this.context.dynamicDataSourceManager.notifyPropertyChanged(SearchComponentType.SearchResultsWebPart);
+                        });
+                    }
 
-                            const searchVerticalSourceData: ISearchVerticalSourceData = this._searchVerticalSourceData.tryGetValue();
-                            const otherVerticals = searchVerticalSourceData.verticalsConfiguration.filter(v => { return v.key !== searchVerticalSourceData.selectedVertical.key; });
-                            searchService.getSearchVerticalCounts(queryKeywords, otherVerticals, searchService.enableQueryRules).then((verticalsInfos) => {
+                    this._resultService.updateResultData(results, this.properties.selectedLayout as any, mountingNodeId, this.properties.customTemplateFieldValues);
 
-                                let currentCount = results.PaginationInformation ? results.PaginationInformation.TotalRows : undefined;
+                    // Send notification to the connected components
+                    this.context.dynamicDataSourceManager.notifyPropertyChanged(SearchComponentType.SearchResultsWebPart);
+                },
+                themeVariant: this._themeVariant
+            } as ISearchResultsContainerProps
+        );
 
-                                if (currentCount !== undefined && currentCount !== null) {
-                                    // Add current vertical infos
-                                    let currentVerticalInfos: ISearchVerticalInformation = {
-                                        Count: currentCount,
-                                        VerticalKey: searchVerticalSourceData.selectedVertical.key
-                                    };
-
-                                    verticalsInfos.push(currentVerticalInfos);
-                                }
-
-                                this._verticalsInformation = update(this._verticalsInformation, { $set: verticalsInfos });
-                                this.context.dynamicDataSourceManager.notifyPropertyChanged(SearchComponentType.SearchResultsWebPart);
-                            });
-                        }
-
-                        this._resultService.updateResultData(results, this.properties.selectedLayout as any, mountingNodeId, this.properties.customTemplateFieldValues);
-
-                        // Send notification to the connected components
-                        this.context.dynamicDataSourceManager.notifyPropertyChanged(SearchComponentType.SearchResultsWebPart);
-                    },
-                    themeVariant: this._themeVariant
-                } as ISearchResultsContainerProps
-            );
-
-            if (isValueConnected && !this.properties.useDefaultSearchQuery ||
-                isValueConnected && this.properties.useDefaultSearchQuery && this.properties.defaultSearchQuery ||
-                !isValueConnected && !isEmpty(queryKeywords)) {
-                renderElement = this._searchContainer;
+        if (isValueConnected && !this.properties.useDefaultSearchQuery ||
+            isValueConnected && this.properties.useDefaultSearchQuery && this.properties.defaultSearchQuery ||
+            !isValueConnected && !isEmpty(queryKeywords)) {
+            renderElement = this._searchContainer;
+        } else {
+            if (this.displayMode === DisplayMode.Edit) {
+                const placeholder: React.ReactElement<any> = React.createElement(
+                    this._placeholder,
+                    {
+                        iconName: strings.PlaceHolderEditLabel,
+                        iconText: strings.PlaceHolderIconText,
+                        description: strings.PlaceHolderDescription,
+                        buttonLabel: strings.PlaceHolderConfigureBtnLabel,
+                        onConfigure: this._setupWebPart.bind(this)
+                    }
+                );
+                renderElement = placeholder;
             } else {
-                if (this.displayMode === DisplayMode.Edit) {
-                    const placeholder: React.ReactElement<any> = React.createElement(
-                        this._placeholder,
-                        {
-                            iconName: strings.PlaceHolderEditLabel,
-                            iconText: strings.PlaceHolderIconText,
-                            description: strings.PlaceHolderDescription,
-                            buttonLabel: strings.PlaceHolderConfigureBtnLabel,
-                            onConfigure: this._setupWebPart.bind(this)
-                        }
-                    );
-                    renderElement = placeholder;
-                } else {
-                    renderElement = React.createElement('div', null);
-                }
+                renderElement = React.createElement('div', null);
             }
+        }
 
-            ReactDom.render(renderElement, this.domElement);
-        });
+        ReactDom.render(renderElement, this.domElement);
 
     }
 
@@ -567,6 +554,15 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
     protected get propertiesMetadata(): IWebPartPropertiesMetadata {
         return {
             'queryKeywords': {
+                dynamicPropertyType: 'string'
+            },
+            'menuItem': {
+                dynamicPropertyType: 'string'
+            },
+            'refinerName': {
+                dynamicPropertyType: 'string'
+            },
+            'path': {
                 dynamicPropertyType: 'string'
             }
         };
@@ -1158,6 +1154,15 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                         fields: [
                             PropertyPaneDynamicField('queryKeywords', {
                                 label: strings.SearchQueryKeywordsFieldLabel
+                            }),
+                            PropertyPaneDynamicField('menuItem', {
+                                label: strings.ItemFieldLabel
+                            }),
+                            PropertyPaneDynamicField('refinerName', {
+                                label: strings.RefinerNameFieldLabel
+                            }),
+                            PropertyPaneDynamicField('path', {
+                                label: strings.PathFieldLabel
                             })
                         ],
                         sharedConfiguration: {
