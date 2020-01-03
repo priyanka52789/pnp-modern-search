@@ -236,15 +236,15 @@ export class DetailsListComponent extends React.Component<DetailsListComponentPr
                             }
 
                             renderColumnValue = <span title={!hasError ? value : ''} dangerouslySetInnerHTML={{ __html: value }}></span>;
-
+                            console.log(item.ServerRedirectedEmbedURL);
                             // Make the value clickable to the corresponding result item 
-                            if (item.ServerRedirectedEmbedURL == "NOSYNC" && column.isResultItemLink) {
+                            if ((item.ServerRedirectedEmbedURL == "NOSYNC" || (item.Path!=null && item.Path.indexOf("apttus.seismic.com/x5/doccenter") == -1)) && column.isResultItemLink) {
                                 //debugger;
                                 // Simulate an async call
 
                                 renderColumnValue = <div>
-                                    <div  style={{ cursor: "pointer", color: this.props.themeVariant.semanticColors.link, textDecoration: "underline" }} onClick={() => { this.setState({ hideDialog: false }); }}>{renderColumnValue}</div>
-                                   
+                                    <div style={{ cursor: "pointer", color: this.props.themeVariant.semanticColors.link, textDecoration: "underline" }} onClick={() => { this.setState({ hideDialog: false }); }}>{renderColumnValue}</div>
+
                                 </div>
 
 
@@ -364,9 +364,11 @@ export class DetailsListWebComponent extends BaseWebComponent {
     }
 
     public connectedCallback() {
-
+        // setTimeout(() => {
         let props = this.resolveAttributes();
         const detailsListComponent = <DetailsListComponent {...props} themeVariant={this._themeVariant} />;
         ReactDOM.render(detailsListComponent, this);
+        //  }, 100);
+
     }
 }
