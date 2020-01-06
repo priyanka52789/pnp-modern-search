@@ -328,7 +328,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 this.handleResultUpdateBroadCast(results);
             }
             console.log(this._dataModCounter);
-            if (this.state.results.RelevantResults.length > 0 && this._dataModCounter <= 1) {
+            if (this.state.results.RelevantResults.length > 0 && this._dataModCounter <= 3) {
                 this._dataModCounter++;
                 let modItemArray: any[] = [];
                 let requestArray: any[] = [];
@@ -365,6 +365,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                         areResultsLoading: false,
                         results: resultMod
                     });
+                    
                     console.log(this.state.results);
                 }).catch(e => {
                     console.log("error");
