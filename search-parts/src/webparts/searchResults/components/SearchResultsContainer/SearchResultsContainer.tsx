@@ -28,6 +28,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
     private _searchWpRef: HTMLElement;
     private _dataModCounter = 0;
+    private configData: any[] = [];
 
     public constructor(props: ISearchResultsContainerProps) {
         super(props);
@@ -47,8 +48,14 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         };
 
         this._onUpdateSort = this._onUpdateSort.bind(this);
+        pnp.sp.web.lists.getByTitle("ConfigStore").items.getAll().then((allItems: any[]) => {
+            this.configData = allItems;
+        });
     }
-
+    //Gets data from config store 
+    private getDataFromConfig(configData: any[], configKey: string) {
+        return configData.filter(obj => obj.Key == configKey).length > 0 ? configData.filter(obj => obj.Key == configKey)[0].Value.toString() : "";
+    }
     public render(): React.ReactElement<ISearchResultsContainerProps> {
         //debugger;
         const areResultsLoading = this.state.areResultsLoading;
@@ -328,53 +335,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 this.handleResultUpdateBroadCast(results);
             }
             console.log(this._dataModCounter);
-            if (this.state.results.RelevantResults.length > 0 && this._dataModCounter <= 3) {
-                this._dataModCounter++;
-                let modItemArray: any[] = [];
-                let requestArray: any[] = [];
-                this.state.results.RelevantResults.map((item) => {
-                    if (typeof item.Path != "undefined") {
-                        let filterCriteria = "SharePointDocumentURL" + ` eq '` + item.Path + `'`;
-                        requestArray.push(pnp.sp.web.lists.getByTitle("Top Assets Siesmic Mapping").items.select("*").filter(filterCriteria).get())
-
-                    }
-
-                });
-                //debugger;
-                //dynamic linking to Siesmic
-                return Promise.all(requestArray).then((results: any[]) => {
-                    //debugger;
-                    results.forEach((element, index) => {
-                        let moditem = this.state.results.RelevantResults[index];
-                        if (element && element[0]) {
-                            var obj = element[0];
-                            moditem.Path = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/" + obj["SiesmicDocumentID"] + "/info/LIST/title?web=1";
-                            moditem.DefaultEncodingURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/" + obj["SiesmicDocumentID"] + "/info/LIST/title?web=1";
-                            moditem.OriginalPath = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/" + obj["SiesmicDocumentID"] + "/info/LIST/title?web=1";
-                            moditem.ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/" + obj["SiesmicDocumentID"] + "/info/LIST/title?web=1";
-
-                        }
-                        else {
-                            moditem.ServerRedirectedEmbedURL = "NOSYNC";
-                        }
-                        modItemArray.push(moditem);
-                    });
-                    let resultMod = this.state.results;
-                    resultMod.RelevantResults = modItemArray;
-                    this.setState({
-                        areResultsLoading: false,
-                        results: resultMod
-                    });
-                    
-                    console.log(this.state.results);
-                }).catch(e => {
-                    console.log("error");
-                    this.setState({
-                        areResultsLoading: false
-                    });
-                });
-
-            }
+           
 
 
         } else {
@@ -394,6 +355,56 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     this.forceUpdate();
                 }
             }
+        }
+        if (this.state.results.RelevantResults.length > 0 && this._dataModCounter <= 3) {
+            //debugger;
+            this._dataModCounter++;
+            let modItemArray: any[] = [];
+            let requestArray: any[] = [];
+            this.state.results.RelevantResults.map((item) => {
+                if (typeof item.Path != "undefined") {
+                    let mappingList = this.getDataFromConfig(this.configData, "MAPPINGLIST");
+                    let filterCriteria = "SharePointDocumentURL" + ` eq '` + item.Path + `'`;
+                   
+                    requestArray.push(pnp.sp.web.lists.getByTitle(mappingList).items.select("*").filter(filterCriteria).get())
+
+                }
+
+            });
+            //debugger;
+            //dynamic linking to Siesmic
+            return Promise.all(requestArray).then((results: any[]) => {
+                //debugger;
+                results.forEach((element, index) => {
+                    let moditem = this.state.results.RelevantResults[index];
+                    if (element && element[0]) {
+                        var obj = element[0];
+                        moditem.Path = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/" + obj["SiesmicDocumentID"] + "/info/LIST/title?web=1";
+                        moditem.DefaultEncodingURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/" + obj["SiesmicDocumentID"] + "/info/LIST/title?web=1";
+                        moditem.OriginalPath = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/" + obj["SiesmicDocumentID"] + "/info/LIST/title?web=1";
+                        moditem.ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/" + obj["SiesmicDocumentID"] + "/info/LIST/title?web=1";
+
+                    }
+                    else {
+                        moditem.ServerRedirectedEmbedURL = "NOSYNC";
+                    }
+                    modItemArray.push(moditem);
+                });
+                let resultMod = this.state.results;
+                resultMod.RelevantResults = modItemArray;
+                this.setState({
+                    areResultsLoading: false,
+                    results: resultMod
+                });
+
+                console.log(this.state.results);
+            }).catch(e => {
+                console.log("error");
+                this.setState({
+                    areResultsLoading: false
+                });
+            });
+
         }
 
     }

@@ -159,10 +159,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         return true;
     }
 
-    //Gets data from config store 
-    private getDataFromConfig(configData: any[], configKey: string) {
-        return configData.filter(obj => obj.Key == configKey).length > 0 ? configData.filter(obj => obj.Key == configKey)[0].Value.toString() : "";
-    }
+  
 
     protected renderCompleted(): void {
         super.renderCompleted();
