@@ -181,8 +181,16 @@ abstract class BaseTemplateService {
         // Return the URL of the search result item
         // Usage: <a href="{{url item}}">
         Handlebars.registerHelper("getUrl", (item: ISearchResult) => {
-            if (!isEmpty(item))
+            if (!isEmpty(item)) {
+                // if (item.Path.indexOf("web=1") == -1) {
+                //     item.ServerRedirectedURL = item.ServerRedirectedURL + "?web=1"
+                //     item.Path = item.Path + "?web=1";
+                // }
+               
                 return new Handlebars.SafeString(item.ServerRedirectedURL ? item.ServerRedirectedURL : item.Path);
+
+
+            }
         });
 
         // Return the search result count message
@@ -312,6 +320,13 @@ abstract class BaseTemplateService {
 
         // Group by a specific property
         Handlebars.registerHelper(groupBy(Handlebars));
+
+        // Handlebars helper: Contains
+        // check if a value is contained in an array
+        Handlebars.registerHelper("containsSiesmic", function (value) {
+            // fallback...
+            return (value.indexOf("doccenter.aspx") == -1) ? "true" : "false";
+        });
     }
 
     /**
@@ -339,7 +354,7 @@ abstract class BaseTemplateService {
 
         // Register live persona wrapper as partial
         let livePersonaTemplate = Handlebars.compile(`<pnp-live-persona upn="{{upn}}" disable-hover="{{disableHover}}" template="{{@partial-block}}"></live-persona>`);
-        Handlebars.registerPartial('livepersona', livePersonaTemplate);        
+        Handlebars.registerPartial('livepersona', livePersonaTemplate);
     }
 
     public async optimizeLoadingForTemplate(templateContent: string): Promise<void> {
@@ -523,7 +538,19 @@ abstract class BaseTemplateService {
      * @returns the compiled HTML template string
      */
     public async processTemplate(templateContext: any, templateContent: string): Promise<string> {
+        //debugger;
         let template = Handlebars.compile(templateContent);
+        let itemArray: any[] = [];
+        if (templateContext.items.length > 0) {
+            templateContext.items.forEach(element => {
+                if (element.Path.indexOf("doccenter.aspx") == -1) {
+                    element.ServerRedirectedEmbedURL = "NOSYNC";
+                }
+                itemArray.push(element);
+            });
+            templateContext.items = itemArray;
+        }
+        console.log(templateContext.items);
         let result = template(templateContext);
         if (result.indexOf("video-preview-item") !== -1) {
             await Loader.LoadVideoLibrary();

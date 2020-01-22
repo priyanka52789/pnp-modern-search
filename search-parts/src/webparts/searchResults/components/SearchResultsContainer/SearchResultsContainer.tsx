@@ -74,6 +74,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
             sortDirection={this.state.sortDirection}
             sortField={this.state.sortField} />;
 
+
+
         // Loading behavior
         if (areResultsLoading) {
 
@@ -121,6 +123,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         if (totalPrimaryAndSecondaryResults === 0 && this.props.displayMode === DisplayMode.Edit && this.props.showBlank) {
             renderWpContent = <MessageBar messageBarType={MessageBarType.info}>{strings.ShowBlankEditInfoMessage}</MessageBar>;
         } else {
+
+
 
             let templateContext = {
                 items: this.state.results.RelevantResults,
@@ -185,34 +189,6 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
 
 
-
-        //static data
-        // if (this.state.results.RelevantResults.length > 0) {
-        //     this.state.results.RelevantResults[0].Path = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
-        //     this.state.results.RelevantResults[0].DefaultEncodingURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
-        //     this.state.results.RelevantResults[0].OriginalPath = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
-        //     this.state.results.RelevantResults[0].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
-        //     this.state.results.RelevantResults[0].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/aaf71c42-f7ab-489e-8940-8482728030cc/info/LIST/title?web=1";
-
-        //     this.state.results.RelevantResults[1] ? this.state.results.RelevantResults[1].Path = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1" : null;
-        //     this.state.results.RelevantResults[1] ? this.state.results.RelevantResults[1].DefaultEncodingURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1" : null;
-        //     this.state.results.RelevantResults[1] ? this.state.results.RelevantResults[1].OriginalPath = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1" : null;
-        //     this.state.results.RelevantResults[1] ? this.state.results.RelevantResults[1].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1" : null;
-        //     this.state.results.RelevantResults[1] ? this.state.results.RelevantResults[1].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/5eed392b-e9c8-4264-b6a9-01d87cc9c2c1/info/LIST/title?web=1" : null;
-
-        //     this.state.results.RelevantResults[2] ? this.state.results.RelevantResults[2].Path = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/b4a469b1-ef52-4dd6-a3c0-783d9b16c6a2/info/LIST/title?web=1" : null;
-        //     this.state.results.RelevantResults[2] ? this.state.results.RelevantResults[2].DefaultEncodingURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/b4a469b1-ef52-4dd6-a3c0-783d9b16c6a2/info/LIST/title?web=1" : null;
-        //     this.state.results.RelevantResults[2] ? this.state.results.RelevantResults[2].OriginalPath = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/b4a469b1-ef52-4dd6-a3c0-783d9b16c6a2/info/LIST/title?web=1" : null;
-        //     this.state.results.RelevantResults[2] ? this.state.results.RelevantResults[2].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/b4a469b1-ef52-4dd6-a3c0-783d9b16c6a2/info/LIST/title?web=1" : null;
-        //     this.state.results.RelevantResults[2] ? this.state.results.RelevantResults[2].ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/b4a469b1-ef52-4dd6-a3c0-783d9b16c6a2/info/LIST/title?web=1" : null;
-
-        //     this.state.results.RelevantResults[3] ? this.state.results.RelevantResults[3].ServerRedirectedEmbedURL = "NOSYNC" : null;
-
-
-        // }
-
-
-
     }
 
     public async componentDidMount() {
@@ -226,7 +202,87 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 });
 
                 const searchResults = await this._getSearchResults(this.props, 1);
+                console.log(this._dataModCounter);
+                if (this.state.results.RelevantResults.length > 0 && this.state.results.RelevantResults[0].Path.indexOf("doccenter") == -1) {
+                    debugger;
+                    this._dataModCounter++;
+                    let modItemArray: any[] = [];
+                    let requestArray: any[] = [];
+                    this.state.results.RelevantResults.map((item) => {
+                        if (typeof item.Path != "undefined") {
+                            let mappingList = this.getDataFromConfig(this.configData, "MAPPINGLIST");
+                            // let path = encodeURIComponent(item.Path).split("/");
+                            // let docPath = path[length - 1].split(/\.(?=[^\.]+$)/);
+                            // let docpathStr = docPath[0] + docPath[1].toLowerCase();
 
+                            // let subpath = path[length - 2] + "/" + docpathStr;
+                            //let finalpath = path[0] + path[1].toLowerCase();
+                            //console.log(subpath);
+                            //console.log(decodeURIComponent(item.Path));
+                            let docURL = decodeURIComponent(item.Path);
+                            let pathArray = docURL.split("/");
+                            let filterCriteria = "";
+                            if (pathArray.length > 1 && docURL.indexOf("LIST/title") == -1) {
+                                let docmatch = pathArray[pathArray.length - 2] + "/" + pathArray[pathArray.length - 1];
+                                filterCriteria = `substringof('` + docmatch + `',SharePointDocumentURL)`;
+                            }
+                            else {
+                                filterCriteria = "SharePointDocumentURL" + ` eq '` + docURL + `'`;
+                            }
+
+                            //let filterCriteria = `substringof(` + subpath + `,"SharePointDocumentURL")`;//
+                            //let filterCriteria = "SharePointDocumentURL" + ` eq '` + docURL + `'`;
+
+                            requestArray.push(pnp.sp.web.lists.getByTitle(mappingList).items.select("*").filter(filterCriteria).get())
+
+                        }
+
+                    });
+                    //debugger;
+                    //dynamic linking to Siesmic
+                    return Promise.all(requestArray).then((results: any[]) => {
+                        //debugger;
+                        let resultIndex = 0;
+                        results.forEach((element, index) => {
+                            let moditem = this.state.results.RelevantResults[index];
+                            resultIndex++;
+
+                            if (element && element[0]) {
+                                var obj = element[0];
+
+                                // moditem.Path = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/" + obj["SiesmicDocumentID"] + "/info/LIST/title?web=1";
+                                // moditem.DefaultEncodingURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/" + obj["SiesmicDocumentID"] + "/info/LIST/title?web=1";
+                                // moditem.OriginalPath = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/" + obj["SiesmicDocumentID"] + "/info/LIST/title?web=1";
+                                // moditem.ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/" + obj["SiesmicDocumentID"] + "/info/LIST/title?web=1";
+                                // moditem.ServerRedirectedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/" + obj["SiesmicDocumentID"] + "/info/LIST/title?web=1";
+                                moditem.Path = "https://apttus.seismic.com/X5/doccenter.aspx?ContentId=" + obj["SiesmicDocumentID"];
+                                moditem.DefaultEncodingURL = "https://apttus.seismic.com/X5/doccenter.aspx?ContentId=" + obj["SiesmicDocumentID"];
+                                moditem.OriginalPath = "https://apttus.seismic.com/X5/doccenter.aspx?ContentId=" + obj["SiesmicDocumentID"];
+                                moditem.ServerRedirectedEmbedURL = "https://apttus.seismic.com/X5/doccenter.aspx?ContentId=" + obj["SiesmicDocumentID"];
+                                moditem.ServerRedirectedURL = "https://apttus.seismic.com/X5/doccenter.aspx?ContentId=" + obj["SiesmicDocumentID"];
+                            }
+                            else {
+                                moditem.ServerRedirectedEmbedURL = "NOSYNC";
+                            }
+                            modItemArray.push(moditem);
+                        });
+
+                        let resultMod = this.state.results;
+                        resultMod.RelevantResults = modItemArray;
+                        this.setState({
+                            areResultsLoading: false,
+                            results: resultMod
+                        });
+
+                        console.log(this.state.results);
+                    }).catch(e => {
+                        console.log("error");
+                        this.setState({
+                            areResultsLoading: false
+                        });
+                    });
+
+                }
                 this.setState({
                     results: searchResults,
                     areResultsLoading: false
@@ -261,7 +317,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
         let executeSearch = false;
         let isPageUpdated = false;
         let selectedPage = 1;
-
+        console.log("update control");
         // New props are passed to the component when the search query has been changed
         if (!isEqual(this.props, prevProps)) {
 
@@ -277,6 +333,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 // - A search vertical is selected (i.e. query template is different)
                 // - A new query is performed via the search box of URL trigger (query keywords is different)
                 this.props.searchService.refinementFilters = [];
+                this._dataModCounter = 0;
             }
 
             if (this.props.selectedPage !== prevProps.selectedPage) {
@@ -334,8 +391,8 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
                 this.handleResultUpdateBroadCast(results);
             }
-            console.log(this._dataModCounter);
-           
+            //console.log(this._dataModCounter);
+
 
 
         } else {
@@ -356,54 +413,88 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 }
             }
         }
-        if (this.state.results.RelevantResults.length > 0 && this._dataModCounter <= 3) {
+        console.log(this._dataModCounter);
+        if (this.state.results.RelevantResults.length > 0 && this.state.results.RelevantResults[0].Path.indexOf("doccenter") == -1 && this._dataModCounter < 4) {
             //debugger;
             this._dataModCounter++;
             let modItemArray: any[] = [];
             let requestArray: any[] = [];
             this.state.results.RelevantResults.map((item) => {
-                if (typeof item.Path != "undefined") {
+                if (typeof item.Path != "undefined" && item.Path.indexOf("doccenter") == -1) {
                     let mappingList = this.getDataFromConfig(this.configData, "MAPPINGLIST");
-                    let filterCriteria = "SharePointDocumentURL" + ` eq '` + item.Path + `'`;
-                   
+                    //let filterCriteria = "SharePointDocumentURL" + ` eq '` + item.Path + `'`;
+                    // console.log(decodeURIComponent(item.Path));
+                    //let path = encodeURIComponent(item.Path).split("/");
+                    // let docPath = path[length - 1].split(/\.(?=[^\.]+$)/);
+                    // let docpathStr = docPath[0] + docPath[1].toLowerCase();
+
+                    // let subpath = path[length - 2] + "/" + docpathStr;
+                    // //let finalpath = path[0] + path[1].toLowerCase();
+                    // console.log(subpath);
+
+                    //let filterCriteria = `substringof(` + subpath + `,"SharePointDocumentURL")`;//
+                    let docURL = decodeURIComponent(item.Path);
+                    let pathArray = docURL.split("/");
+                    let filterCriteria = "";
+                    if (pathArray.length > 1 && docURL.indexOf("LIST/title") == -1) {
+                        let docmatch = pathArray[pathArray.length - 2] + "/" + pathArray[pathArray.length - 1];
+                        filterCriteria = `substringof('` + docmatch + `',SharePointDocumentURL)`;
+                    }
+                    else {
+                        filterCriteria = "SharePointDocumentURL" + ` eq '` + docURL + `'`;
+                    }
+                    // let filterCriteria = "SharePointDocumentURL" + ` eq '` + docURL + `'`;
+
                     requestArray.push(pnp.sp.web.lists.getByTitle(mappingList).items.select("*").filter(filterCriteria).get())
 
                 }
+                else {
+                    this._dataModCounter = 0;
+                }
+
 
             });
             //debugger;
             //dynamic linking to Siesmic
-            return Promise.all(requestArray).then((results: any[]) => {
-                //debugger;
-                results.forEach((element, index) => {
-                    let moditem = this.state.results.RelevantResults[index];
-                    if (element && element[0]) {
-                        var obj = element[0];
-                        moditem.Path = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/" + obj["SiesmicDocumentID"] + "/info/LIST/title?web=1";
-                        moditem.DefaultEncodingURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/" + obj["SiesmicDocumentID"] + "/info/LIST/title?web=1";
-                        moditem.OriginalPath = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/" + obj["SiesmicDocumentID"] + "/info/LIST/title?web=1";
-                        moditem.ServerRedirectedEmbedURL = "https://apttus.seismic.com/x5/doccenter.aspx#/contentmanager/detail/1/" + obj["SiesmicDocumentID"] + "/info/LIST/title?web=1";
+            let results: any[] = [];
+            if (requestArray.length > 0) {
+                return Promise.all(requestArray).then((results: any[]) => {
+                    //debugger;
+                    let resultIndex = 0;
+                    results.forEach((element, index) => {
+                        let moditem = this.state.results.RelevantResults[index];
+                        resultIndex++;
+                        if (element && element[0]) {
+                            var obj = element[0];
+                            moditem.Path = "https://apttus.seismic.com/X5/doccenter.aspx?ContentId=" + obj["SiesmicDocumentID"];
+                            moditem.DefaultEncodingURL = "https://apttus.seismic.com/X5/doccenter.aspx?ContentId=" + obj["SiesmicDocumentID"];
+                            moditem.OriginalPath = "https://apttus.seismic.com/X5/doccenter.aspx?ContentId=" + obj["SiesmicDocumentID"];
+                            moditem.ServerRedirectedEmbedURL = "https://apttus.seismic.com/X5/doccenter.aspx?ContentId=" + obj["SiesmicDocumentID"];
+                            moditem.ServerRedirectedURL = "https://apttus.seismic.com/X5/doccenter.aspx?ContentId=" + obj["SiesmicDocumentID"];
 
-                    }
-                    else {
-                        moditem.ServerRedirectedEmbedURL = "NOSYNC";
-                    }
-                    modItemArray.push(moditem);
-                });
-                let resultMod = this.state.results;
-                resultMod.RelevantResults = modItemArray;
-                this.setState({
-                    areResultsLoading: false,
-                    results: resultMod
-                });
+                        }
+                        else {
+                            moditem.ServerRedirectedEmbedURL = "NOSYNC";
+                        }
+                        modItemArray.push(moditem);
+                    });
 
-                console.log(this.state.results);
-            }).catch(e => {
-                console.log("error");
-                this.setState({
-                    areResultsLoading: false
+                    let resultMod = this.state.results;
+                    resultMod.RelevantResults = modItemArray;
+                    this.setState({
+                        areResultsLoading: false,
+                        results: resultMod
+                    });
+
+                    console.log(this.state.results);
+                }).catch(e => {
+                    console.log("error");
+                    this.setState({
+                        areResultsLoading: false
+                    });
                 });
-            });
+            }
+
 
         }
 

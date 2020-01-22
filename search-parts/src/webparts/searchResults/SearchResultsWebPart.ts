@@ -235,7 +235,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 searchService: this._searchService,
                 taxonomyService: this._taxonomyService,
                 //queryKeywords: `Path:"https://apttustest.sharepoint.com/sites/SalesPortal/` + queryKeywords + ` Document" (contentclass:STS_ListItem OR IsDocument:True) TopAssetOWSBOOL=1`,
-                queryKeywords: `Path:"` + path + `" (contentclass:STS_ListItem OR IsDocument:True) ` + refiner + `="` + selectedMenuItem + `"`,
+                queryKeywords: `Path:"` + path + `" AND (contentclass:STS_ListItem OR IsDocument:True) AND ` + refiner + `:"` + selectedMenuItem + `" AND (-FileName:.aspx)`,
                 sortableFields: this.properties.sortableFields,
                 showPaging: this.properties.showPaging,
                 showResultsCount: this.properties.showResultsCount,
