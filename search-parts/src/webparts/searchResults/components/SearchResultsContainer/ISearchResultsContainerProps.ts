@@ -125,6 +125,7 @@ interface ISearchResultsContainerProps {
      * The current theme variant
      */
     themeVariant: IReadonlyTheme | undefined;
+    selectedMenuItem:string;
 }
 
 export default ISearchResultsContainerProps;

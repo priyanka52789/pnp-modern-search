@@ -159,7 +159,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         return true;
     }
 
-  
+
 
     protected renderCompleted(): void {
         super.renderCompleted();
@@ -176,9 +176,11 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
             queryDataSourceValue = '';
             this.context.propertyPane.refresh();
         }
-
+        //debugger;
         let queryKeywords = (!queryDataSourceValue) ? this.properties.defaultSearchQuery : queryDataSourceValue;
         let selectedMenuItem = this._dynamicDataService.getDataSourceValue(this.properties.menuItem, this.properties.sourceId, this.properties.propertyId, this.properties.propertyPath);
+        //let selectedMenuCategory = this._dynamicDataService.getDataSourceValue(this.properties., this.properties.sourceId, this.properties.propertyId, this.properties.propertyPath);
+
         let refiner = this._dynamicDataService.getDataSourceValue(this.properties.refinerName, this.properties.sourceId, this.properties.propertyId, this.properties.propertyPath);
         let path = this._dynamicDataService.getDataSourceValue(this.properties.path, this.properties.sourceId, this.properties.propertyId, this.properties.propertyPath);
 
@@ -214,7 +216,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         // Configure the provider before the query according to our needs
         this._searchService = update(this._searchService, {
             resultsCount: { $set: this.properties.maxResultsCount },
-            queryTemplate: { $set: queryTemplate },
+            queryTemplate: { $set: "" },
             resultSourceId: { $set: sourceId },
             sortList: { $set: this._convertToSortList(this.properties.sortList) },
             enableQueryRules: { $set: this.properties.enableQueryRules },
@@ -227,6 +229,14 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
         });
 
         const isValueConnected = !!this.properties.queryKeywords.tryGetSource();
+        let querykey = "";
+        if (selectedMenuItem == "Competitive Intelligence") {
+            querykey = `Path:"` + path + `" AND (IsDocument:True) AND ` + ` (-FileName:.aspx) ` + ((queryTemplate != "" && queryTemplate != "{searchTerms}") ? " AND " + queryTemplate : "");
+
+        }
+        else {
+            querykey = `Path:"` + path + `" AND (contentclass:STS_ListItem OR IsDocument:True) AND ` + refiner + `:"` + selectedMenuItem + `" AND (-FileName:.aspx)` + ((queryTemplate != "" && queryTemplate != "{searchTerms}") ? " AND " + queryTemplate : "");
+        }
 
         console.log("path:", path, " refiner:", refiner, " selectedMenuItem:", selectedMenuItem, " queryKeywords:", queryKeywords);
         this._searchContainer = React.createElement(
@@ -235,7 +245,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 searchService: this._searchService,
                 taxonomyService: this._taxonomyService,
                 //queryKeywords: `Path:"https://apttustest.sharepoint.com/sites/SalesPortal/` + queryKeywords + ` Document" (contentclass:STS_ListItem OR IsDocument:True) TopAssetOWSBOOL=1`,
-                queryKeywords: `Path:"` + path + `" AND (contentclass:STS_ListItem OR IsDocument:True) AND ` + refiner + `:"` + selectedMenuItem + `" AND (-FileName:.aspx)`,
+                queryKeywords: querykey,
                 sortableFields: this.properties.sortableFields,
                 showPaging: this.properties.showPaging,
                 showResultsCount: this.properties.showResultsCount,
@@ -244,7 +254,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 templateService: this._templateService,
                 templateContent: this._templateContentToDisplay,
                 templateParameters: this.properties.templateParameters,
-                webPartTitle: this.properties.webPartTitle + ' for ' + selectedMenuItem,
+                webPartTitle: "",//this.properties.webPartTitle != "" ? (this.properties.webPartTitle + ' for ' + selectedMenuItem) : "",
                 currentUICultureName: this.context.pageContext.cultureInfo.currentUICultureName,
                 siteServerRelativeUrl: this.context.pageContext.site.serverRelativeUrl,
                 webServerRelativeUrl: this.context.pageContext.web.serverRelativeUrl,
@@ -254,6 +264,7 @@ export default class SearchResultsWebPart extends BaseClientSideWebPart<ISearchR
                 rendererId: this.properties.selectedLayout as any,
                 enableLocalization: this.properties.enableLocalization,
                 selectedPage: selectedPage,
+                selectedMenuItem:selectedMenuItem,
                 onSearchResultsUpdate: async (results, mountingNodeId, searchService) => {
                     if (this.properties.selectedLayout in ResultsLayoutOption) {
                         let node = document.getElementById(mountingNodeId);

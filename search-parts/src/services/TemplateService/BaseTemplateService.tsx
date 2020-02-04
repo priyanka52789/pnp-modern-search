@@ -543,7 +543,17 @@ abstract class BaseTemplateService {
         let itemArray: any[] = [];
         if (templateContext.items.length > 0) {
             templateContext.items.forEach(element => {
-                if (element.Path.indexOf("doccenter.aspx") == -1) {
+               
+                if (element.Path.indexOf("SalesPortal/Sales") > -1) {
+                    if(element.Path.indexOf("web=1") == -1)
+                    {
+                        element.ServerRedirectedURL = element.ServerRedirectedURL + "?web=1";
+                        element.Path = element.Path + "?web=1";
+                    }
+                   
+                    element.ServerRedirectedEmbedURL = "";
+                }
+                else if (element.Path.indexOf("doccenter.aspx") == -1) {
                     element.ServerRedirectedEmbedURL = "NOSYNC";
                 }
                 itemArray.push(element);

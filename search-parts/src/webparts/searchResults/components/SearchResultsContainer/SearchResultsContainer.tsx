@@ -28,6 +28,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
 
     private _searchWpRef: HTMLElement;
     private _dataModCounter = 0;
+    private _compdataModCounter = 0;
     private configData: any[] = [];
 
     public constructor(props: ISearchResultsContainerProps) {
@@ -202,9 +203,22 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 });
 
                 const searchResults = await this._getSearchResults(this.props, 1);
-                console.log(this._dataModCounter);
+                //debugger;
+                if (this.props.selectedMenuItem == "Competitive Intelligence"  && this._compdataModCounter < 3) {
+                    let resultsArray: any[] = [];
+                    this._compdataModCounter++;
+                   // resultsArray = this.state.results.RelevantResults;
+                    let resultMod = this.state.results;
+                   
+                    resultsArray = resultMod.RelevantResults.filter(item => item["RefinableSTring101"] != "");
+                    resultMod.RelevantResults = resultsArray;
+                    this.setState({
+                        results: resultMod,
+                        areResultsLoading: false
+                    })
+                }
                 if (this.state.results.RelevantResults.length > 0 && this.state.results.RelevantResults[0].Path.indexOf("doccenter") == -1) {
-                    debugger;
+                    //debugger;
                     this._dataModCounter++;
                     let modItemArray: any[] = [];
                     let requestArray: any[] = [];
@@ -268,11 +282,13 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                         });
 
                         let resultMod = this.state.results;
-                        resultMod.RelevantResults = modItemArray;
-                        this.setState({
-                            areResultsLoading: false,
-                            results: resultMod
-                        });
+                        if (resultMod.RelevantResults.length == modItemArray.length) {
+                            resultMod.RelevantResults = modItemArray;
+                            this.setState({
+                                areResultsLoading: false,
+                                results: resultMod
+                            });
+                        }
 
                         console.log(this.state.results);
                     }).catch(e => {
@@ -334,6 +350,7 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 // - A new query is performed via the search box of URL trigger (query keywords is different)
                 this.props.searchService.refinementFilters = [];
                 this._dataModCounter = 0;
+                this._compdataModCounter=0;
             }
 
             if (this.props.selectedPage !== prevProps.selectedPage) {
@@ -413,7 +430,20 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                 }
             }
         }
-        console.log(this._dataModCounter);
+        //debugger;
+        if (this.props.selectedMenuItem == "Competitive Intelligence"  && this._compdataModCounter < 3) {
+            let resultsArray: any[] = [];
+            this._compdataModCounter++;
+           // resultsArray = this.state.results.RelevantResults;
+            let resultMod = this.state.results;
+           
+            resultsArray = resultMod.RelevantResults.filter(item => item["RefinableSTring101"] != "");
+            resultMod.RelevantResults = resultsArray;
+            this.setState({
+                results: resultMod,
+                areResultsLoading: false
+            })
+        }
         if (this.state.results.RelevantResults.length > 0 && this.state.results.RelevantResults[0].Path.indexOf("doccenter") == -1 && this._dataModCounter < 4) {
             //debugger;
             this._dataModCounter++;
@@ -480,11 +510,13 @@ export default class SearchResultsContainer extends React.Component<ISearchResul
                     });
 
                     let resultMod = this.state.results;
-                    resultMod.RelevantResults = modItemArray;
-                    this.setState({
-                        areResultsLoading: false,
-                        results: resultMod
-                    });
+                    if (resultMod.RelevantResults.length == modItemArray.length) {
+                        resultMod.RelevantResults = modItemArray;
+                        this.setState({
+                            areResultsLoading: false,
+                            results: resultMod
+                        });
+                    }
 
                     console.log(this.state.results);
                 }).catch(e => {
